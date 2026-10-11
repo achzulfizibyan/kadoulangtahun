@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { Play, Pause, Moon, Sun, KeyRound, ArrowRight, Gift, Camera, Heart, Gamepad2 } from 'lucide-react';
 import './index.css';
+import AnimatedCake from './components/AnimatedCake';
+import FlowerGarden from './components/FlowerGarden';
+
 
 /* ===== ANIMATION PRESETS ===== */
 const page = {
@@ -28,12 +31,14 @@ const ParticleCanvas = () => {
       reset() {
         this.x = Math.random() * w;
         this.y = Math.random() * h + h * 0.1;
-        this.size = Math.random() * 2.5 + 0.5;
+        this.size = Math.random() * 2.8 + 0.8;
         this.vy = -(Math.random() * 0.6 + 0.15);
         this.vx = Math.random() * 0.4 - 0.2;
-        this.opacity = Math.random() * 0.5 + 0.2;
+        this.opacity = Math.random() * 0.55 + 0.25;
         this.life = Math.random() * 400 + 200;
         this.age = 0;
+        const colors = ['#fbcfe8', '#e9d5ff', '#ffffff', '#e2a89f'];
+        this.color = colors[Math.floor(Math.random() * colors.length)];
       }
       update() {
         this.x += this.vx + Math.sin(this.age * 0.015) * 0.2;
@@ -45,7 +50,9 @@ const ParticleCanvas = () => {
         const fade = 1 - this.age / this.life;
         ctx.save();
         ctx.globalAlpha = this.opacity * fade;
-        ctx.fillStyle = `hsl(${38 + Math.random() * 10}, 60%, ${70 + Math.random() * 15}%)`;
+        ctx.fillStyle = this.color;
+        ctx.shadowColor = this.color;
+        ctx.shadowBlur = 4;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
@@ -75,7 +82,7 @@ const LoginPage = ({ onNext }) => {
 
   const submit = () => {
     if (pw.toLowerCase() === 'sayang') {
-      confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 }, colors: ['#c9a96e', '#b76e79', '#e8d5a8', '#fff'] });
+      confetti({ particleCount: 160, spread: 100, origin: { y: 0.6 }, colors: ['#fbcfe8', '#e9d5ff', '#ffffff', '#e2a89f', '#f472b6', '#c084fc'] });
       onNext();
     } else { setErr(true); setShake(true); setTimeout(() => setShake(false), 500); }
   };
@@ -166,10 +173,10 @@ const CakePage = ({ onNext }) => {
     if (n === 3) {
       setTimeout(() => {
         const end = Date.now() + 2500;
-        const colors = ['#c9a96e', '#b76e79', '#e8d5a8', '#fff'];
+        const colors = ['#fbcfe8', '#e9d5ff', '#ffffff', '#e2a89f', '#f472b6', '#c084fc'];
         (function f() {
-          confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors });
-          confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors });
+          confetti({ particleCount: 4, angle: 60, spread: 55, origin: { x: 0 }, colors });
+          confetti({ particleCount: 4, angle: 120, spread: 55, origin: { x: 1 }, colors });
           if (Date.now() < end) requestAnimationFrame(f);
         })();
       }, 200);
@@ -185,11 +192,8 @@ const CakePage = ({ onNext }) => {
           {blows < 3 ? 'Ketuk kuenya tiga kali untuk meniup lilin!' : ''}
         </motion.p>
 
-        <motion.div variants={fadeUp}>
-          <motion.div className="cake-frame" onClick={blow} whileTap={{ scale: 0.93 }}
-            animate={{ scale: blows >= 3 ? 1 : 1 + blows * 0.03 }}>
-            <img src="/assets/cake.jpg" alt="Birthday Cake" style={{ filter: blows >= 3 ? 'brightness(1.1)' : 'none' }} />
-          </motion.div>
+        <motion.div variants={fadeUp} style={{ width: '100%', margin: '12px 0' }}>
+          <AnimatedCake blows={blows} onBlow={blow} recipientName="Sofi" />
         </motion.div>
 
         <motion.div className="blow-dots" variants={fadeUp}>
@@ -263,61 +267,6 @@ const MemoriesPage = ({ onNext }) => (
   </motion.div>
 );
 
-/* ===== SCRATCH CARD ===== */
-const ScratchCard = ({ text }) => {
-  const ref = useRef(null);
-  const done = useRef(false);
-  useEffect(() => {
-    const cv = ref.current; if (!cv) return;
-    const rect = cv.parentElement.getBoundingClientRect();
-    const dpr = devicePixelRatio || 1;
-    cv.width = rect.width * dpr; cv.height = rect.height * dpr;
-    cv.style.width = rect.width + 'px'; cv.style.height = rect.height + 'px';
-    const ctx = cv.getContext('2d');
-    ctx.scale(dpr, dpr);
-
-    // Gold foil scratch layer
-    const grd = ctx.createLinearGradient(0, 0, rect.width, rect.height);
-    grd.addColorStop(0, '#8a7a5a'); grd.addColorStop(0.5, '#a89a70'); grd.addColorStop(1, '#8a7a5a');
-    ctx.fillStyle = grd;
-    ctx.fillRect(0, 0, rect.width, rect.height);
-    ctx.font = '500 14px Inter'; ctx.fillStyle = '#6b6040'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText('GOSOK UNTUK MEMBUKA', rect.width / 2, rect.height / 2);
-
-    let down = false;
-    const pos = e => {
-      const r = cv.getBoundingClientRect();
-      return { x: (e.touches ? e.touches[0].clientX : e.clientX) - r.left, y: (e.touches ? e.touches[0].clientY : e.clientY) - r.top };
-    };
-    const scratch = e => {
-      if (!down) return;
-      if (e.cancelable) e.preventDefault();
-      const p = pos(e);
-      ctx.globalCompositeOperation = 'destination-out';
-      ctx.beginPath(); ctx.arc(p.x * dpr, p.y * dpr, 20 * dpr, 0, Math.PI * 2); ctx.fill();
-      if (!done.current) {
-        done.current = true;
-        setTimeout(() => {
-          const r = cv.getBoundingClientRect();
-          confetti({ particleCount: 40, spread: 50, origin: { x: (r.left + r.width / 2) / innerWidth, y: (r.top + r.height / 2) / innerHeight }, colors: ['#c9a96e', '#b76e79'] });
-        }, 1200);
-      }
-    };
-    const d = () => { down = true; }; const u = () => { down = false; };
-    cv.addEventListener('mousedown', d); cv.addEventListener('mouseup', u); cv.addEventListener('mouseleave', u); cv.addEventListener('mousemove', scratch);
-    cv.addEventListener('touchstart', d, { passive: false }); cv.addEventListener('touchend', u); cv.addEventListener('touchmove', scratch, { passive: false });
-    return () => {
-      cv.removeEventListener('mousedown', d); cv.removeEventListener('mouseup', u); cv.removeEventListener('mouseleave', u); cv.removeEventListener('mousemove', scratch);
-      cv.removeEventListener('touchstart', d); cv.removeEventListener('touchend', u); cv.removeEventListener('touchmove', scratch);
-    };
-  }, []);
-  return (
-    <div className="scratch-card-container">
-      <div className="scratch-content">{text}</div>
-      <canvas ref={ref} className="scratch-canvas" />
-    </div>
-  );
-};
 
 /* ===== PAGE 4.5: MINI GAME ===== */
 const GamePage = ({ onNext }) => {
@@ -407,7 +356,7 @@ const GamePage = ({ onNext }) => {
 };
 
 /* ===== PAGE 5: GIFTS ===== */
-const GiftsPage = () => {
+const GiftsPage = ({ onNext }) => {
   const [opened, setOpened] = useState(false);
   const [typed, setTyped] = useState('');
   const msg = "Hai sayang, selamat ulang tahun!\n\nTerima kasih sudah lahir ke dunia ini dan menjadi bagian terindah dalam hidupku. Aku sangat bersyukur memilikimu.\n\nSemoga semua mimpimu terwujud, dan semoga aku bisa selalu ada di sisimu untuk merayakannya.\n\nWith all my love,\nYour Man ❤️";
@@ -415,7 +364,7 @@ const GiftsPage = () => {
   const openLetter = () => {
     if (opened) return;
     setOpened(true);
-    confetti({ particleCount: 100, spread: 80, origin: { y: 0.45 }, colors: ['#c9a96e', '#b76e79', '#e8d5a8'] });
+    confetti({ particleCount: 120, spread: 80, origin: { y: 0.45 }, colors: ['#fbcfe8', '#e9d5ff', '#ffffff', '#e2a89f'] });
     setTimeout(() => {
       let i = 0;
       const id = setInterval(() => {
@@ -444,23 +393,15 @@ const GiftsPage = () => {
           </div>
         </motion.div>
 
-        <hr className="gold-line" style={{ marginTop: 36 }} />
-
-        <motion.p className="label" variants={fadeUp} initial="initial" animate="animate">✦ Bonus ✦</motion.p>
-        <motion.h2 className="heading-lg" variants={fadeUp} initial="initial" animate="animate">Tiket Gosok</motion.h2>
-        <motion.p className="body-text" variants={fadeUp} initial="initial" animate="animate" style={{ marginBottom: 20 }}>
-          Gosok lapisan emas untuk melihat hadiahnya.
-        </motion.p>
-
-        <div className="scratch-grid">
-          <ScratchCard text="🎬 Nonton Bioskop Bareng" />
-          <ScratchCard text="🍣 Makan di Tempat Favoritmu" />
-          <ScratchCard text="🧋 Minuman Bebas Pilih" />
-        </div>
-
-        <motion.p className="body-text" style={{ marginTop: 36, fontSize: '0.8rem', fontStyle: 'italic' }} variants={fadeUp} initial="initial" animate="animate">
+        <motion.p className="body-text" style={{ marginTop: 24, fontSize: '0.85rem', fontStyle: 'italic' }} variants={fadeUp} initial="initial" animate="animate">
           I love you, forever and always ❤️
         </motion.p>
+
+        <motion.div variants={fadeUp} style={{ marginTop: 24 }}>
+          <button className="btn-gold" onClick={onNext}>
+            🌸 Buka Taman Bunga Rahasia
+          </button>
+        </motion.div>
       </div>
     </motion.div>
   );
@@ -472,6 +413,14 @@ export default function App() {
   const [night, setNight] = useState(false);
   const [playing, setPlaying] = useState(false);
   const audio = useRef(null);
+
+  useEffect(() => {
+    if (night) {
+      document.body.classList.add('light-theme');
+    } else {
+      document.body.classList.remove('light-theme');
+    }
+  }, [night]);
 
   const toggleMusic = () => { if (playing) audio.current.pause(); else audio.current.play(); setPlaying(!playing); };
   const next = () => {
@@ -505,7 +454,8 @@ export default function App() {
         {stage === 2 && <CakePage key="p2" onNext={next} />}
         {stage === 3 && <MemoriesPage key="p3" onNext={next} />}
         {stage === 4 && <GamePage key="p4" onNext={next} />}
-        {stage === 5 && <GiftsPage key="p5" />}
+        {stage === 5 && <GiftsPage key="p5" onNext={next} />}
+        {stage === 6 && <FlowerGarden key="p6" onBack={() => setStage(5)} recipientName="Sofi" />}
       </AnimatePresence>
     </>
   );

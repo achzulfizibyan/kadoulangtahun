@@ -1,0 +1,465 @@
+/* ===== ANIMATED BIRTHDAY CAKE (PASTEL PINK, LAVENDER, PUTIH, ROSE GOLD) ===== */
+
+.cake-scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+  position: relative;
+  user-select: none;
+}
+
+/* Card Showcase - Pastel Pink to Lavender Gradient */
+.cake-card {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  background: linear-gradient(145deg, #fce7f3 0%, #fbcfe8 25%, #f472b6 50%, #d8b4fe 80%, #c084fc 100%);
+  border-radius: 28px;
+  box-shadow: 
+    0 20px 45px rgba(244, 114, 182, 0.4),
+    0 0 35px rgba(192, 132, 252, 0.35),
+    0 0 0 1.5px rgba(255, 255, 255, 0.6) inset,
+    0 10px 30px rgba(26, 11, 30, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+
+.cake-card:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 
+    0 26px 55px rgba(244, 114, 182, 0.5),
+    0 0 45px rgba(192, 132, 252, 0.45),
+    0 0 0 2px rgba(255, 255, 255, 0.8) inset,
+    0 14px 35px rgba(26, 11, 30, 0.35);
+}
+
+/* Ambient dreamy glow inside cake card */
+.cake-card-ambient {
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.45) 0%, transparent 65%),
+    radial-gradient(circle at 80% 80%, rgba(233, 213, 255, 0.4) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Cake Stage: Natural vertical layout so candle is directly attached to cake */
+.cake-stage {
+  position: relative;
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+/* Base Drop Animation with Satisfying Spring Bounce */
+@keyframes cakeDropIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-300px);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(7px);
+  }
+  82% {
+    transform: translateY(-3px);
+  }
+  92% {
+    transform: translateY(1.5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Candle Wrapper: Sits directly above cake-tower and plants 6px into frosting */
+.candle-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  margin-bottom: -6px; /* Plants the candle base 6px directly inside top frosting! */
+  opacity: 0;
+  transform: translateY(-300px);
+}
+
+.cake-scene.animated .candle-wrapper {
+  animation: cakeDropIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 3.5s;
+}
+
+/* Flame Container */
+.flame-container {
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin-bottom: -2px;
+}
+
+/* Flame shape & flickering glow */
+@keyframes flameIgnite {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.35);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes flameFlicker {
+  0%, 100% {
+    transform: scale(1) rotate(-1.5deg);
+    border-radius: 50% 50% 35% 35% / 60% 60% 40% 40%;
+    box-shadow: 
+      0 0 14px #fbcfe8,
+      0 0 28px rgba(244, 114, 182, 0.65),
+      0 0 40px rgba(192, 132, 252, 0.4);
+  }
+  25% {
+    transform: scale(1.08, 0.94) rotate(2deg);
+    box-shadow: 
+      0 0 16px #e2a89f,
+      0 0 32px rgba(226, 168, 159, 0.7),
+      0 0 45px rgba(244, 114, 182, 0.5);
+  }
+  50% {
+    transform: scale(0.94, 1.06) rotate(-2deg);
+    box-shadow: 
+      0 0 12px #fbcfe8,
+      0 0 24px rgba(192, 132, 252, 0.6),
+      0 0 35px rgba(244, 114, 182, 0.5);
+  }
+  75% {
+    transform: scale(1.04, 0.98) rotate(1.5deg);
+    box-shadow: 
+      0 0 16px #fbcfe8,
+      0 0 30px rgba(244, 114, 182, 0.7),
+      0 0 42px rgba(192, 132, 252, 0.45);
+  }
+}
+
+.flame {
+  width: 14px;
+  height: 22px;
+  background: radial-gradient(ellipse at bottom, #ffffff 15%, #fef08a 38%, #f472b6 72%, #e2a89f 95%);
+  border-radius: 50% 50% 35% 35% / 60% 60% 40% 40%;
+  box-shadow: 
+    0 0 14px #fbcfe8,
+    0 0 28px rgba(244, 114, 182, 0.65),
+    0 0 40px rgba(192, 132, 252, 0.4);
+  transform-origin: center bottom;
+  opacity: 0;
+}
+
+.cake-scene.animated .flame.lit {
+  opacity: 1;
+  animation: 
+    flameIgnite 0.4s ease-out forwards,
+    flameFlicker 1.5s infinite 0.4s ease-in-out;
+  animation-delay: 4.0s, 4.4s;
+}
+
+/* Smoke when candle is blown out */
+@keyframes smokePuff {
+  0% {
+    opacity: 0.85;
+    transform: translate(0, 0) scale(0.6);
+  }
+  50% {
+    opacity: 0.55;
+    transform: translate(-6px, -18px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(8px, -36px) scale(1.8);
+  }
+}
+
+.smoke-puff {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  filter: blur(2px);
+  animation: smokePuff 1.2s ease-out forwards;
+  pointer-events: none;
+}
+
+/* Candle Wick */
+.candle-wick {
+  width: 2.5px;
+  height: 6px;
+  background: #4a3e4c;
+  border-radius: 2px;
+  margin-bottom: -1px;
+}
+
+/* Candle Body with Pastel Pink, Lavender, and Rose Gold stripes */
+.candle {
+  width: 12px;
+  height: 38px;
+  background: #ffffff;
+  border-radius: 4px 4px 2px 2px;
+  background-image: repeating-linear-gradient(
+    45deg,
+    #ffffff,
+    #ffffff 4px,
+    rgba(244, 114, 182, 0.85) 4px,
+    rgba(244, 114, 182, 0.85) 8px,
+    rgba(192, 132, 252, 0.85) 8px,
+    rgba(192, 132, 252, 0.85) 12px,
+    rgba(226, 168, 159, 0.88) 12px,
+    rgba(226, 168, 159, 0.88) 16px
+  );
+  box-shadow: 
+    0 3px 8px rgba(226, 168, 159, 0.4),
+    0 0 10px rgba(244, 114, 182, 0.25);
+}
+
+/* Cake Tower Container (Natural top-to-bottom stack) */
+.cake-tower {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 195px;
+  z-index: 2;
+}
+
+/* Sponge Cake Layers - Warm Rose Gold Sponge */
+.cake-layer {
+  width: 195px;
+  height: 30px;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08) inset;
+  opacity: 0;
+  transform: translateY(-300px);
+}
+
+.cake-layer.layer-1 {
+  background: #c88d83; /* Rose Gold Sponge Base */
+}
+.cake-layer.layer-2 {
+  background: #ba7e74; /* Middle Rose Gold Sponge */
+}
+.cake-layer.layer-3 {
+  background: #ad6f66; /* Top Rose Gold Sponge */
+}
+
+/* Layer 1 lands first at 0.65s */
+.cake-scene.animated .cake-layer.layer-1 {
+  animation: cakeDropIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 0.65s;
+}
+
+/* Layer 2 lands at 1.55s */
+.cake-scene.animated .cake-layer.layer-2 {
+  animation: cakeDropIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 1.55s;
+}
+
+/* Layer 3 lands at 2.45s */
+.cake-scene.animated .cake-layer.layer-3 {
+  animation: cakeDropIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 2.45s;
+}
+
+/* Cream Filling between layers - Lavender & Pastel Pink Cream */
+.cake-cream {
+  width: 195px;
+  height: 9px;
+  border-radius: 4px;
+  opacity: 0;
+  transform: translateY(-300px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.cake-cream.cream-1 {
+  background: #f3e8ff; /* Lavender Vanilla Cream */
+}
+
+.cake-cream.cream-2 {
+  background: #fde8ef; /* Pastel Pink Strawberry Cream */
+}
+
+/* Cream 1 lands at 1.1s */
+.cake-scene.animated .cake-cream.cream-1 {
+  animation: cakeDropIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 1.1s;
+}
+
+/* Cream 2 lands at 2.0s */
+.cake-scene.animated .cake-cream.cream-2 {
+  animation: cakeDropIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 2.0s;
+}
+
+/* Top Frosting / Drip Icing - Putih Murni on top of Layer 3 */
+.cake-frosting {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 14px;
+  background: #ffffff;
+  border-radius: 8px 8px 0 0;
+  z-index: 5;
+  opacity: 0;
+  transform: translateY(-300px);
+  box-shadow: 0 2px 8px rgba(244, 114, 182, 0.25);
+}
+
+.cake-scene.animated .cake-frosting {
+  animation: cakeDropIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 2.95s;
+}
+
+/* Wavy Icing Drips - Putih Murni */
+.frosting-drips {
+  position: absolute;
+  top: 13px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 2px;
+  pointer-events: none;
+}
+
+.drip {
+  background: #ffffff;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 2px 4px rgba(244, 114, 182, 0.15);
+}
+.drip-1 { width: 18px; height: 10px; }
+.drip-2 { width: 22px; height: 16px; }
+.drip-3 { width: 19px; height: 9px; }
+.drip-4 { width: 24px; height: 18px; }
+.drip-5 { width: 17px; height: 11px; }
+.drip-6 { width: 22px; height: 15px; }
+.drip-7 { width: 19px; height: 10px; }
+.drip-8 { width: 23px; height: 16px; }
+.drip-9 { width: 16px; height: 8px; }
+
+/* Plate - Putih with Rose Gold Rim Accent */
+.cake-plate {
+  position: relative;
+  width: 235px;
+  height: 10px;
+  margin-top: 3px;
+  background: #ffffff;
+  border-radius: 20px;
+  border-bottom: 2px solid rgba(226, 168, 159, 0.45);
+  box-shadow: 
+    0 6px 16px rgba(183, 110, 121, 0.25),
+    0 2px 5px rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  transform: translateY(-300px);
+  z-index: 1;
+}
+
+.cake-scene.animated .cake-plate {
+  animation: cakeDropIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 0.2s;
+}
+
+/* Text Banner below cake */
+@keyframes textFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.cake-wishes {
+  margin-top: 16px;
+  text-align: center;
+  opacity: 0;
+  z-index: 5;
+}
+
+.cake-scene.animated .cake-wishes {
+  animation: textFadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 4.4s;
+}
+
+.cake-title {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(2rem, 5.5vw, 2.5rem);
+  color: #ffffff;
+  font-weight: 700;
+  text-shadow: 
+    0 2px 14px rgba(183, 110, 121, 0.5),
+    0 0 20px rgba(255, 255, 255, 0.6);
+  line-height: 1.1;
+  margin-bottom: 2px;
+}
+
+.cake-name {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(1.5rem, 4vw, 1.85rem);
+  color: #ffffff;
+  font-weight: 600;
+  text-shadow: 
+    0 2px 12px rgba(192, 132, 252, 0.5),
+    0 0 16px rgba(255, 255, 255, 0.6);
+}
+
+/* Replay & Action controls */
+.cake-controls {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-replay {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(226, 168, 159, 0.45);
+  color: #fbeee9;
+  font-size: 0.82rem;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(10px);
+}
+
+.btn-replay:hover {
+  background: rgba(244, 114, 182, 0.25);
+  border-color: var(--pastel-pink);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 0 15px rgba(244, 114, 182, 0.4);
+}
